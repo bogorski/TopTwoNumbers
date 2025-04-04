@@ -24,3 +24,9 @@ Program "TopTwoNumbers" pozwala na wczytanie pliku tekstowego zawierającego lic
 
 ## Obsługa błędów
 - Jeśli użytkownik nie wybierze pliku lub wybierze plik o niewłaściwym rozszerzeniu, pojawi się komunikat o błędzie.
+
+---
+
+## Demo
+
+Sprawdź działający **[live demo programu tutaj](https://bogorski.github.io/TopTwoNumbers/)**.
