@@ -29,4 +29,4 @@ Program "TopTwoNumbers" pozwala na wczytanie pliku tekstowego zawierającego lic
 
 ## Demo
 
-Sprawdź działający **[live demo programu tutaj](https://bogorski.github.io/TopTwoNumbers/)**.
+Sprawdź **[live demo programu tutaj](https://bogorski.github.io/TopTwoNumbers/)**.
