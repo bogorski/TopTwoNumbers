@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dwie najczęściej występujące liczby w pliku txt</title>
+	
+	<style>
+    #loader {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 20px;
+        font-weight: bold;
+        color: #333;
+		display: none;
+    }
+	
+	#error {
+		color: red;
+	}
+	
+	.row {
+		text-align: center;
+	}
+	
+	h2 {
+		margin-bottom: 1em;
+		margin-top: 5em;
+	}
+</style>
+</head>
+<body>
+	<div class="row">
+		<h2>Wczytaj plik z liczbami</h2>
+		
+		<input type="file" id="fileInput" />
+		<button onclick="loadFile()">Wczytaj liczby</button>
+		
+		<div id="loader">Ładowanie...</div>
+		
+		<h2>Wynik:</h2>
+		<p id="error"></p>
+		<p id="mostFrequentNumber"></p>
+		<p id="lastMostFrequentNumber"></p>
+		<h3 id="result"></h3>
+		
+		 <p id="executionTime"></p>
+	</div>
+
+    <script>
+        let numbers = []; // Tablica do przechowywania wszystkich liczb
+
+        function loadFile() {
+			document.getElementById("error").textContent = "";
+			document.getElementById("mostFrequentNumber").textContent = "";
+			document.getElementById("lastMostFrequentNumber").textContent = "";
+			document.getElementById("result").textContent = "";
+			document.getElementById("executionTime").textContent = "";
+			
+            const fileInput = document.getElementById("fileInput");
+
+            // Sprawdzamy, czy plik został wybrany
+            if (fileInput.files.length === 0) {
+                alert("Proszę wybrać plik.");
+                return;
+            }
+
+            const file = fileInput.files[0];
+			
+			const fileExtension = file.name.split('.').pop().toLowerCase();
+			if (fileExtension !== 'txt') {
+                document.getElementById("error").textContent = "Proszę wybrać plik w formacie .txt.";
+                return;
+            }
+			
+            const reader = new FileReader();
+			
+			document.getElementById("loader").style.display = 'block';
+			
+			// Zapisujemy czas rozpoczęcia
+            const startTime = performance.now(); 
+
+            reader.onload = function(event) {
+                // Odczytujemy zawartość pliku
+                const content = event.target.result;
+				
+				const numbersArray = content.split('\n').map(Number); // Konwertujemy na liczby
+
+				// Sortowanie tablicy rosnąco
+				numbersArray.sort((a, b) => a - b);
+				
+			
+				//filteredNumbers = [];
+				const numberCounts = new Map();
+                let i = 0;
+
+                while (i < numbersArray.length) {
+                    let currentNum = numbersArray[i];
+                    let count = 0;
+
+                    // Zliczanie, ile razy ta sama liczba występuje z rzędu
+                    while (i + count < numbersArray.length && numbersArray[i + count] === currentNum) {
+                        count++;
+                    }
+
+                    // Jeśli liczba występuje więcej niż raz, dodajemy ją do tablicy
+                    if (count > 1) {
+						numberCounts.set(currentNum, (numberCounts.get(currentNum) || 0) + count);
+                    }
+
+                    // Przechodzimy do kolejnej liczby
+                    i += count;
+                }
+				
+				// Sortujemy Mapę według wartości (liczba wystąpień)
+				const sortedMapArray = Array.from(numberCounts.entries()).sort((a, b) => b[1] - a[1]);
+
+				// Wyświetlamy wyniki
+				document.getElementById("mostFrequentNumber").textContent = `Najczęściej występująca liczba (${sortedMapArray[0][1]} razy): ${sortedMapArray[0][0]}`;
+				document.getElementById("lastMostFrequentNumber").textContent = `Druga najczęściej występująca liczba (${sortedMapArray[1][1]} razy): ${sortedMapArray[1][0]}`;
+				document.getElementById("result").textContent = `${sortedMapArray[0][0]},${sortedMapArray[1][0]}`;				
+				document.getElementById("loader").style.display = 'none';
+				
+				// Zapisujemy czas zakończenia
+                const endTime = performance.now();
+
+                // Obliczamy czas wykonania
+                const executionTime = endTime - startTime;
+                document.getElementById("executionTime").textContent = `Czas wykonania: ${executionTime.toFixed(3)/1000}s (${executionTime.toFixed(2)}ms)`; // Wyświetlamy czas w ms
+            };
+
+            reader.onerror = function() {
+                alert("Wystąpił błąd podczas odczytu pliku.");
+				document.getElementById("loader").style.display = 'none';
+            };
+
+            // Odczytujemy zawartość pliku jako tekst
+            reader.readAsText(file);
+        }
+    </script>
+</body>
+</html>
